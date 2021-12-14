@@ -8,7 +8,6 @@ Connect results page with result
 
 import 'dart:collection';
 import 'dart:convert';
-
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +67,7 @@ class _HomePageState extends State<Home> {
   }
 
   Future<List<Post>> search(String search) async {
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(Duration(milliseconds: 200));
     List<HashMap<String, String>> result = lookup(search);
     if (result.length == 0) {
       return List.generate(result.length + 1, (int index) {
@@ -120,12 +119,9 @@ class _HomePageState extends State<Home> {
         padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: SearchBar<Post>(
           searchBarPadding: EdgeInsets.zero,
+          hintText:  "Search a strain",
           minimumChars: 1,
           debounceDuration: Duration(milliseconds: 100),
-          placeHolder: Text(
-            "Search a strain",
-            style: style(),
-          ),
           onSearch: search,
           onItemFound: (Post post, int index) {
             if (post.title == "No results") {
@@ -166,7 +162,7 @@ class _HomePageState extends State<Home> {
             color: Colors.white,
           ),
           cancellationText: Text(
-            "Cancel",
+            "Clear",
             style: style(color: Colors.grey, fontSize: 15)
           ),
           // cancellationText: Text(""),
