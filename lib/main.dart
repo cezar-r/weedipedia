@@ -10,71 +10,27 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flappy_search_bar/flappy_search_bar.dart';
+import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MaterialApp(
   home: Home()
 ));
 
-Container buildContainer(String title, String subject) {
-  return Container(
-    margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-              fontFamily: 'SegoeBold',
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                // width: 390,
-                margin: EdgeInsets.fromLTRB(0, 5, 10, 0),
-                padding: EdgeInsets.fromLTRB(10, 10, 0, 15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                  color: Colors.grey[900],
-                ),
-                child: Text(
-                  subject,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontFamily: 'SegoeBold',
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
+TextStyle style({Color? color = Colors.white,
+  double fontSize = 12,
+  FontWeight? fontWeight = FontWeight.bold,
+  String? fontFamily = 'SegoeBold'}) {
+  return TextStyle(
+    color: color,
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    fontFamily: fontFamily,
   );
 }
 
-Container printTop(String text, double fontSize_) {
-  return Container(
-    margin: EdgeInsets.fromLTRB(10, 5, 0, 0),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontSize: fontSize_,
-        color: Colors.white,
-        fontFamily: 'SegoeBold',
-      ),
-    ),
-  );
-}
 
 class Post {
   final String title;
@@ -154,12 +110,7 @@ class _HomePageState extends State<Home> {
       appBar: AppBar(
         title: Text(
           "Weedipedia",
-          style: TextStyle(
-            color: Colors.greenAccent[700],
-            fontSize: 35.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'LinuxLibertine',
-          ),
+          style: style(color: Colors.greenAccent[700], fontSize: 35, fontFamily: 'LinuxLibertine'),
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
@@ -173,70 +124,56 @@ class _HomePageState extends State<Home> {
           debounceDuration: Duration(milliseconds: 100),
           placeHolder: Text(
             "Search a strain",
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'SegoeBold',
-            ),
+            style: style(),
           ),
           onSearch: search,
           onItemFound: (Post post, int index) {
+            if (post.title == "No results") {
+              return Container(
+                margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
+                alignment: Alignment.center,
+                child: Container(
+                  child: Text(
+                    "No results",
+                    style: style(color: Colors.greenAccent[700], fontSize: 15),
+                  ),
+                ),
+              );
+            }
             return ListTile(
+              trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.greenAccent[700],
+              ),
               onTap: () {
                 print(context.runtimeType);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(post.title, _data)));
               },
               title: Text(
                 post.title,
-                style: TextStyle(
-                  color: Colors.greenAccent[700],
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'SegoeBold',
-                ),
+                style: style(color: Colors.greenAccent[700], fontSize: 15),
               ),
+              selectedTileColor: Colors.grey[900],
               subtitle: Text(
                 post.description,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'SegoeBold',
-                ),
+                style: style(),
               ),
             );
           },
-          //
-          textStyle: TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'SegoeBold',
-          ),
+          textStyle: style(fontSize: 15),
           icon: Icon(
             Icons.search,
             color: Colors.white,
           ),
           cancellationText: Text(
             "Cancel",
-            style: TextStyle(
-                color: Colors.grey,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'SegoeBold'
-            ),
+            style: style(color: Colors.grey, fontSize: 15)
           ),
           // cancellationText: Text(""),
           loader: Center(
             child: Text(
               "loading...",
-              style: TextStyle(
-                  color: Colors.greenAccent[700],
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'SegoeBold'
-              ),
+              style: style(color: Colors.greenAccent[700], fontSize: 15)
             ),
           ),
         ),
@@ -263,8 +200,105 @@ class _ResultPageState extends State<ResultPage> {
   String name = '';
   List data = [];
 
+  launchURL(String url) async {
+    print('got here');
+    if (await canLaunch(url)) {
+      await launch(url, forceWebView: true);
+    } else {
+      print('Could not launch $url');
+    }
+  }
+
   _ResultPageState(String name, List data) {
     lookup(name, data);
+  }
+
+  Container buildContainer(String title, String subject, {bool openLink = false}) {
+    if (openLink) {
+      return Container(
+        margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Text(
+                  title,
+                  style: style(fontSize: 20, fontWeight: FontWeight.normal)
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(0, 5, 10, 0),
+                    child: ElevatedButton(
+                      onPressed: ()  {
+                        print('got here');
+                        launchURL(subject);
+                      },
+                      child: Text(
+                          subject,
+                          style: style(fontWeight: FontWeight.normal)
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.grey[900]),
+                        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(10, 10, 0, 15)),
+                        alignment: AlignmentDirectional.centerStart,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    };
+    return Container(
+      margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Text(
+              title,
+              style: style(fontSize: 20, fontWeight: FontWeight.normal)
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  // width: 390,
+                  margin: EdgeInsets.fromLTRB(0, 5, 10, 0),
+                  padding: EdgeInsets.fromLTRB(10, 10, 0, 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                    color: Colors.grey[900],
+                  ),
+                  child: Text(
+                    subject,
+                    style: style(fontWeight: FontWeight.normal)
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container printTop(String text, double fontSize) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(10, 5, 0, 0),
+      child: Text(
+        text,
+        style: style(fontSize: fontSize, fontWeight: FontWeight.normal)
+      ),
+    );
   }
 
   void lookup(String name, List data) {
@@ -297,18 +331,13 @@ class _ResultPageState extends State<ResultPage> {
       appBar: AppBar(
         title: Text(
           "Weedipedia",
-          style: TextStyle(
-            color: Colors.greenAccent[700],
-            fontSize: 35.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'LinuxLibertine',
-          ),
+          style: style(color: Colors.greenAccent[700], fontSize: 35, fontFamily: 'LinuxLibertine')
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -319,15 +348,6 @@ class _ResultPageState extends State<ResultPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // ElevatedButton(
-            //     style: ButtonStyle(
-            //       backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
-            //     ),
-            //     child: Text(''),
-            //     onPressed: () {
-            //       Navigator.pop(context);
-            //   },
-            // ),
             printTop("${_data['name']}", 25.0), // Name of strain
             printTop("${_data['strain_type']}", 18.0), // Type of strain
             printTop("${_data['strain_type_strength']}", 12.0), // Percent of type of strain
@@ -348,22 +368,14 @@ class _ResultPageState extends State<ResultPage> {
                           padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
                           child: Text(
                             "THC",
-                            style: TextStyle(
-                              fontSize: 25.0,
-                              color: Colors.white,
-                              fontFamily: 'SegoeBold',
-                            ),
+                            style: style(fontSize: 25, fontWeight: FontWeight.normal)
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
                           child: Text(
                             "${_data['thc_pct']}",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: checkColor("${_data['thc_pct']}"),
-                              fontFamily: 'SegoeBold',
-                            ),
+                            style: style(fontSize: 18, color: checkColor("${_data['thc_pct']}"), fontWeight: FontWeight.normal),
                           ),
                         ),
                       ],
@@ -380,22 +392,14 @@ class _ResultPageState extends State<ResultPage> {
                           padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
                           child: Text(
                             "CBD",
-                            style: TextStyle(
-                              fontSize: 25.0,
-                              color: Colors.white,
-                              fontFamily: 'SegoeBold',
-                            ),
+                            style: style(fontSize: 25, fontWeight: FontWeight.normal)
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
                           child: Text(
                             "${_data['cbd_pct']}",
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              color: checkColor("${_data['cbd_pct']}"),
-                              fontFamily: 'SegoeBold',
-                            ),
+                            style: style(fontSize: 18, color: checkColor("${_data['cbd_pct']}"), fontWeight: FontWeight.normal),
                           ),
                         ),
                       ],
@@ -412,22 +416,14 @@ class _ResultPageState extends State<ResultPage> {
                           padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
                           child: Text(
                             "CBN",
-                            style: TextStyle(
-                              fontSize: 25.0,
-                              color: Colors.white,
-                              fontFamily: 'SegoeBold',
-                            ),
+                            style: style(fontSize: 25, fontWeight: FontWeight.normal)
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
                           child: Text(
                             "${_data['cbn_pct']}",
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              color: checkColor("${_data['cbn_pct']}"),
-                              fontFamily: 'SegoeBold',
-                            ),
+                            style: style(fontSize: 18, color: checkColor("${_data['cbn_pct']}"), fontWeight: FontWeight.normal),
                           ),
                         ),
                       ],
@@ -444,11 +440,7 @@ class _ResultPageState extends State<ResultPage> {
                   Container(
                     child: Text(
                       "Review",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontFamily: 'SegoeBold',
-                      ),
+                      style: style(fontSize: 20, fontWeight: FontWeight.normal)
                     ),
                   ),
                   Container(
@@ -456,12 +448,7 @@ class _ResultPageState extends State<ResultPage> {
                     child: Text(
                       "${_data['review']}",
                       // "A+ Wonder is an  indica dominant hybrid strain (80% indica/20% sativa) created through crossing the classic William's Wonder X Afghani #1 IBL strains. Best known for its super calming and tranquil high, A+ Wonder is perfect for the patient who wants to reflect on their day in a perfectly happy state before finally falling asleep. It starts with a relaxing cerebral lift, filling your mind with a lightly buzzing sense of uplifted euphoria that adds a touch of creativity to your mental state, too. This sense of relaxation will soon spread its warming tendrils throughout the rest of your body, lulling you into a peaceful state of deep relaxation and ease that quickly turns sedative and sleepy. Thanks to these long-lasting effects and its moderately high 14-18% average THC level, A+ Wonder is often chosen to treat conditions such as chronic pain, mood swings or depression, insomnia and muscle spasms or cramps. This bud has a sour yet sweet fruity citrus flavor with a ",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontFamily: 'SegoeBold',
-                        wordSpacing: .01,
-                      ),
+                      style: style(fontWeight: FontWeight.normal),
                     ),
                   ),
                 ],
@@ -470,7 +457,8 @@ class _ResultPageState extends State<ResultPage> {
             buildContainer("Effects", "${_data['effects']}"), // Effects
             buildContainer("May Relieve", "${_data['reliefs']}"), //May Relieve
             buildContainer("Flavors", "${_data['flavors']}"), // Flavors
-            buildContainer("Aromas", "${_data['aromas']}"), // Aromas
+            buildContainer("Aromas", "${_data['aromas']}"),
+            buildContainer("Source", "${_data['source']}", openLink: true), // Aromas
             Container(
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 0)
             ),
