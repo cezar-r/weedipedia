@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.9.2"
   flutter_test:
     sdk: flutter
 
@@ -62,8 +63,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/data.json
-    - assets/weedphoto1.jpg
-    - assets/weedphoto2.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -90,3 +89,8 @@ flutter:
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_icons:
+  remove_alpha_ios: true
+  ios: true
+  image_path: "assets/icon/AppIcon@3x.png"
