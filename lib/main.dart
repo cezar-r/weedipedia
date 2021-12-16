@@ -1,9 +1,11 @@
 /* TODO
-Home page with search bar (have results appear while typing)
-Load in data into flutter app
-Connect search page with results page
-Page that loads result
-Connect results page with result
+Fix data
+  - Reviews are missing the first word sometimes as well as have "Follow our newsletter"
+  - Uppercase strain names that are lowercase (.title())
+Try different backgrounds on the back page
+Potentially add custom color theme page
+
+Fix Python Interpreter
  */
 
 import 'dart:collection';
@@ -67,9 +69,9 @@ class _HomePageState extends State<Home> {
   }
 
   Future<List<Post>> search(String search) async {
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 0));
     List<HashMap<String, String>> result = lookup(search);
-    if (result.length == 0) {
+    if (result.isEmpty) {
       return List.generate(result.length + 1, (int index) {
         return Post(
           "No results",
@@ -95,7 +97,7 @@ class _HomePageState extends State<Home> {
         data.putIfAbsent('name', () => _data[i]['name']);
         data.putIfAbsent('strain_type', () => _data[i]['strain_type']);
       }
-      if (!data.isEmpty)
+      if (data.isNotEmpty)
         returnData.add(data);
     }
     return returnData;
@@ -121,7 +123,7 @@ class _HomePageState extends State<Home> {
           searchBarPadding: EdgeInsets.zero,
           hintText:  "Search a strain",
           minimumChars: 1,
-          debounceDuration: Duration(milliseconds: 100),
+          debounceDuration: Duration(milliseconds: 50),
           onSearch: search,
           onItemFound: (Post post, int index) {
             if (post.title == "No results") {
@@ -142,7 +144,6 @@ class _HomePageState extends State<Home> {
                   color: Colors.greenAccent[700],
               ),
               onTap: () {
-                print(context.runtimeType);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(post.title, _data)));
               },
               title: Text(
@@ -197,7 +198,6 @@ class _ResultPageState extends State<ResultPage> {
   List data = [];
 
   launchURL(String url) async {
-    print('got here');
     if (await canLaunch(url)) {
       await launch(url, forceWebView: true);
     } else {
@@ -212,7 +212,7 @@ class _ResultPageState extends State<ResultPage> {
   Container buildContainer(String title, String subject, {bool openLink = false}) {
     if (openLink) {
       return Container(
-        margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
+        margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -230,7 +230,6 @@ class _ResultPageState extends State<ResultPage> {
                     margin: EdgeInsets.fromLTRB(0, 5, 10, 0),
                     child: ElevatedButton(
                       onPressed: ()  {
-                        print('got here');
                         launchURL(subject);
                       },
                       child: Text(
@@ -252,7 +251,7 @@ class _ResultPageState extends State<ResultPage> {
       );
     };
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
+      margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -321,7 +320,6 @@ class _ResultPageState extends State<ResultPage> {
 
   @override
   Widget build(BuildContext context) {
-    // lookup(this.name, this.data);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -440,10 +438,9 @@ class _ResultPageState extends State<ResultPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    margin: EdgeInsets.fromLTRB(0, 10, 10, 0),
                     child: Text(
                       "${_data['review']}",
-                      // "A+ Wonder is an  indica dominant hybrid strain (80% indica/20% sativa) created through crossing the classic William's Wonder X Afghani #1 IBL strains. Best known for its super calming and tranquil high, A+ Wonder is perfect for the patient who wants to reflect on their day in a perfectly happy state before finally falling asleep. It starts with a relaxing cerebral lift, filling your mind with a lightly buzzing sense of uplifted euphoria that adds a touch of creativity to your mental state, too. This sense of relaxation will soon spread its warming tendrils throughout the rest of your body, lulling you into a peaceful state of deep relaxation and ease that quickly turns sedative and sleepy. Thanks to these long-lasting effects and its moderately high 14-18% average THC level, A+ Wonder is often chosen to treat conditions such as chronic pain, mood swings or depression, insomnia and muscle spasms or cramps. This bud has a sour yet sweet fruity citrus flavor with a ",
                       style: style(fontWeight: FontWeight.normal),
                     ),
                   ),
@@ -467,7 +464,6 @@ class _ResultPageState extends State<ResultPage> {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     throw UnimplementedError();
   }
 
