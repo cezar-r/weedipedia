@@ -1,1 +1,12 @@
-# weedipedia
+<img src = "https://github.com/cezar-r/weedipedia/blob/main/assets/icon/AppIcon.png" height = 200 width = 200> 
+
+# Weedipedia Mobile App
+
+## Background
+The marijuana industry is one of the fastest growing industries at the moment, with new strains and variants being created everyday. This application aims to be a companion app, containing information on over 7,500 strains.
+
+## Data
+All of the data was scraped from [Allbud](https://www.allbud.com/) using [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/). The code for this can be found [here](https://github.com/cezar-r/weedipedia/blob/main/src/scraper.py). Each strain is then saved as a [strain](https://github.com/cezar-r/weedipedia/blob/main/src/strain.py) object, which are all stored in a list that is saved as a pickle file to preserve raw data. This data is then [converted to a json file](https://github.com/cezar-r/weedipedia/blob/main/src/datamanager.py)
+
+## Display
+Below is an example of the app interface
