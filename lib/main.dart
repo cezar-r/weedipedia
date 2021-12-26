@@ -6,15 +6,21 @@ Try different backgrounds on the back page
 Potentially add custom color theme page
 
 Fix Python Interpreter
+
+Testflight TODO
  */
 
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 
 void main() => runApp(MaterialApp(
   home: Home()
@@ -32,6 +38,196 @@ TextStyle style({Color? color = Colors.white,
   );
 }
 
+// const List<Widget> _pages = <Widget>[
+//   Home(),
+//   Account(),
+// ];
+
+
+class GlobalColor {
+  Color? color = Colors.purpleAccent; // create function that reads file
+
+  GlobalColor();
+
+  Color? getColor() {
+    return color;
+  }
+
+  void setColor(Color? newColor) {
+    color = newColor; // write to file
+  }
+}
+
+Map _color_hash = {"greenAccent700" : Colors.greenAccent[700],
+  "black" : Colors.black,
+  "red400" : Colors.red[400],
+  "red" : Colors.red,
+  "redAccent400" : Colors.redAccent[400],
+  "redAccent700" : Colors.redAccent[700],
+  "pinkAccent100" : Colors.pinkAccent[100],
+  "pinkAccent" : Colors.pinkAccent,
+  "pinkAccent400" : Colors.pinkAccent[400],
+  "pink800" : Colors.pink[800]};
+
+
+class AppUser {
+
+  Color? themeColor = Colors.greenAccent[700];
+  String themeColorStr = 'greenAccent700';
+  String key = 'color';
+
+  AppUser() {
+    getColor();
+  }
+
+  void getColor() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    themeColorStr = prefs.getString(key) ?? 'greenAccent700';
+    themeColor = getColorHelper(themeColorStr);
+  }
+
+  Color? getColorHelper(String key) {
+    return _color_hash[key];
+  }
+
+  void setColor(String color) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, color);
+    themeColorStr = color;
+    themeColor = getColorHelper(themeColorStr);
+    print('setting color');
+    print(color);
+  }
+
+}
+
+AppUser user = AppUser();
+
+
+// class User {
+//   Color? themeColor;
+//   Color? backgroundColor;
+//   String themeColorStr = 'greenAccent700';
+//   String backgroundColorStr = '';
+//   List<String> saved = [];
+//   Map _data = {};
+//
+//   Map _color_hash = {"greenAccent700" : Colors.greenAccent[700],
+//                     "black" : Colors.black,
+//                     "red400" : Colors.red[400],
+//                     "red" : Colors.red,
+//                     "redAccent400" : Colors.redAccent[400],
+//                     "redAccent700" : Colors.redAccent[700]};
+//
+//
+//   User() {
+//     writeJson();
+//     readJson();
+//   }
+//
+//
+//   void readJson() async {
+//     _data = await readJsonHelper();
+//     themeColor = _getColor("themeColor");
+//     themeColorStr = _data["themeColor"];
+//     backgroundColor = _getColor("backgroundColor");
+//     backgroundColorStr = "black";
+//     saved = _getSaved();
+//
+//   }
+//
+//   Future<Map> readJsonHelper() async {
+//     // // final path = await _localPath;
+//     // // final String response = await rootBundle.loadString('$path/user_info.json');
+//     // // final path = await _localPath;
+//     // // final String response = await rootBundle.loadString('$path/user_info.json');
+//     // final file = await _localFile;
+//     // final response = await file.readAsString();
+//     // final data = await response.toString();
+//     // UserColor usercolor = UserColor.fromJson(jsonDecode(data));
+//     // print(usercolor.themeColor);
+//
+//     // final file = await _localFile;
+//     // final response = await file.readAsString();
+//     // final data = await jsonDecode(response);
+//     // return data['info'][0];
+//     final String response = await rootBundle.loadString('assets/user_info.json');
+//     final data = await json.decode(response);
+//     // print(data);
+//     return data['info'][0];
+//     /*
+//      final String response = await rootBundle.loadString('assets/data2_rfmtd.json');
+//     final data = await json.decode(response);
+//     setState(() {
+//       _data = data["items"];
+//     });
+//     return data['items'];
+//      */
+//   }
+//
+//   Color? _getColor(String key) {
+//     return _color_hash[_data[key]];
+//   }
+//
+//   List<String> _getSaved() {
+//     return _data[saved];
+//   }
+//
+//   void editThemeColor(String key) {
+//     themeColor = _color_hash[key];
+//     themeColorStr = key;
+//     writeJson();
+//     readJson();
+//     // print(themeColorStr);
+//     // print(themeColor.toString());
+//   }
+//
+//   void editBackgroundColor(String key) {
+//     backgroundColor = _color_hash[key];
+//     writeJson();
+//     readJson();
+//   }
+//
+//   void addToSaved(String strainName) {
+//     saved.add(strainName);
+//     writeJson();
+//     readJson();
+//   }
+//
+//   void removeFromSaved(String strainName) {
+//     saved.remove(strainName);
+//     writeJson();
+//     readJson();
+//   }
+//
+//   void writeJson() {
+//     // figure out how to either write to proper local json file or find way to read json file
+//     Map new_info = {"themeColor" : themeColorStr, "backgroundColor" : backgroundColorStr, "saved" : saved};
+//     // print(themeColorStr);
+//     writeOut(new_info);
+//   }
+//
+//   Future<String> get _localPath async {
+//     final directory = await getApplicationDocumentsDirectory();
+//     return directory.path;
+//   }
+//
+//   Future<File> get _localFile async {
+//     final path = await _localPath;
+//     // print("$path/user_info.json");
+//     return File('assets/user_info.json');
+//   }
+//
+//   Future<File> writeOut(Map data) async {
+//     final file = await _localFile;
+//     Map fullData = {"info" : [data.toString()]};
+//     // print(fullData.toString());
+//     // Write the file
+//     return file.writeAsString('$fullData');
+//   }
+// }
+
+// User user = User();
 
 class Post {
   final String title;
@@ -49,9 +245,10 @@ class Home extends StatefulWidget {
 
 class _HomePageState extends State<Home> {
   List _data  = [];
+  GlobalColor color = new GlobalColor();
 
   Future<List> readJsonHelper() async {
-    final String response = await rootBundle.loadString('assets/data.json');
+    final String response = await rootBundle.loadString('assets/data2_rfmtd.json');
     final data = await json.decode(response);
     setState(() {
       _data = data["items"];
@@ -62,6 +259,7 @@ class _HomePageState extends State<Home> {
   void readJson() async {
     List data = await readJsonHelper();
     _data = data;
+    // print(data[0].toString());
   }
 
   _HomePageState() {
@@ -103,19 +301,31 @@ class _HomePageState extends State<Home> {
     return returnData;
   }
 
-  // const Home({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    int _selectedIndex = 0;
+    void onItemTapped(int index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
           "Weedipedia",
-          style: style(color: Colors.greenAccent[700], fontSize: 35, fontFamily: 'LinuxLibertine'),
+          style: style(color: user.themeColor, fontSize: 35, fontFamily: 'LinuxLibertine'),
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
         elevation: 0.0,
+        leading: IconButton(
+          icon: Icon(Icons.settings_rounded),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ColorPage()));
+          },
+          color: Colors.white,
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -133,27 +343,31 @@ class _HomePageState extends State<Home> {
                 child: Container(
                   child: Text(
                     "No results",
-                    style: style(color: Colors.greenAccent[700], fontSize: 15),
+                    style: style(color: user.themeColor, fontSize: 15),
                   ),
                 ),
               );
             }
-            return ListTile(
-              trailing: Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.greenAccent[700],
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(post.title, _data)));
-              },
-              title: Text(
-                post.title,
-                style: style(color: Colors.greenAccent[700], fontSize: 15),
-              ),
-              selectedTileColor: Colors.grey[900],
-              subtitle: Text(
-                post.description,
-                style: style(),
+            return Container(
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: ListTile(
+                contentPadding: EdgeInsets.fromLTRB(5, 0, 20, 0),
+                trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    color: user.themeColor,
+                ),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(post.title, _data)));
+                },
+                title: Text(
+                  post.title,
+                  style: style(color: user.themeColor, fontSize: 16),
+                ),
+                selectedTileColor: Colors.grey[900],
+                subtitle: Text(
+                  post.description,
+                  style: style(),
+                ),
               ),
             );
           },
@@ -170,11 +384,29 @@ class _HomePageState extends State<Home> {
           loader: Center(
             child: Text(
               "loading...",
-              style: style(color: Colors.greenAccent[700], fontSize: 15)
+              style: style(color: user.themeColor, fontSize: 15)
             ),
           ),
         ),
       ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   backgroundColor: Colors.black,
+      //   selectedItemColor: user.themeColor,
+      //   unselectedItemColor: Colors.grey[700],
+      //   items : const <BottomNavigationBarItem>[
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.search),
+      //       label: 'Search'
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.account_circle),
+      //       label: 'Account'
+      //     ),
+      //   ],
+      //   currentIndex: _selectedIndex,
+      //   onTap: onItemTapped,
+      // ),
+
     );
   }
 }
@@ -197,6 +429,8 @@ class _ResultPageState extends State<ResultPage> {
   String name = '';
   List data = [];
 
+  GlobalColor color = new GlobalColor();
+
   launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url, forceWebView: true);
@@ -207,6 +441,27 @@ class _ResultPageState extends State<ResultPage> {
 
   _ResultPageState(String name, List data) {
     lookup(name, data);
+  }
+
+  Container reviewContainer(String review) {
+    return Container( // Review
+      margin: EdgeInsets.fromLTRB(10, 30, 0, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Text(
+                "Review",
+                style: style(fontSize: 20, fontWeight: FontWeight.normal)
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(0, 10, 10, 0),
+            child: new DescriptionTextWidget(text: review),
+          ),
+        ],
+      ),
+    ); //Review
   }
 
   Container buildContainer(String title, String subject, {bool openLink = false}) {
@@ -273,7 +528,7 @@ class _ResultPageState extends State<ResultPage> {
                     borderRadius: BorderRadius.all(Radius.circular(6.0)),
                     color: Colors.grey[900],
                   ),
-                  child: Text(
+                  child: SelectableText(
                     subject,
                     style: style(fontWeight: FontWeight.normal)
                   ),
@@ -304,7 +559,7 @@ class _ResultPageState extends State<ResultPage> {
     if (value == '-')
       return Colors.white;
     else
-      return Colors.greenAccent[700];
+      return user.themeColor;
   }
 
   Map<String, dynamic> lookupHelper(String name, List data) {
@@ -318,6 +573,8 @@ class _ResultPageState extends State<ResultPage> {
     return Map<String, dynamic>();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -325,7 +582,7 @@ class _ResultPageState extends State<ResultPage> {
       appBar: AppBar(
         title: Text(
           "Weedipedia",
-          style: style(color: Colors.greenAccent[700], fontSize: 35, fontFamily: 'LinuxLibertine')
+          style: style(color: user.themeColor, fontSize: 35, fontFamily: 'LinuxLibertine')
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
@@ -335,7 +592,7 @@ class _ResultPageState extends State<ResultPage> {
           onPressed: () {
             Navigator.pop(context);
           },
-          color: Colors.greenAccent[700],
+          color: user.themeColor,
         ),
       ),
       body: SingleChildScrollView(
@@ -426,27 +683,7 @@ class _ResultPageState extends State<ResultPage> {
                 ],
               ),
             ), // THC %'s
-            Container( // Review
-              margin: EdgeInsets.fromLTRB(10, 30, 0, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    child: Text(
-                      "Review",
-                      style: style(fontSize: 20, fontWeight: FontWeight.normal)
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 10, 10, 0),
-                    child: Text(
-                      "${_data['review']}",
-                      style: style(fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                ],
-              ),
-            ), //Review
+            reviewContainer("${_data['review']}"),
             buildContainer("Effects", "${_data['effects']}"), // Effects
             buildContainer("May Relieve", "${_data['reliefs']}"), //May Relieve
             buildContainer("Flavors", "${_data['flavors']}"), // Flavors
@@ -466,5 +703,164 @@ class _ResultPageState extends State<ResultPage> {
   State<StatefulWidget> createState() {
     throw UnimplementedError();
   }
-
 }
+
+
+class DescriptionTextWidget extends StatefulWidget {
+  String text;
+
+  DescriptionTextWidget({required this.text});
+
+  @override
+  _DescriptionTextWidgetState createState() => new _DescriptionTextWidgetState();
+}
+
+class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
+  String firstHalf = '';
+  String secondHalf = '';
+  GlobalColor color = new GlobalColor();
+  bool flag = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.text.length > 150) {
+      firstHalf = widget.text.substring(0, 150);
+      secondHalf = widget.text.substring(150, widget.text.length);
+    } else {
+      firstHalf = widget.text;
+      secondHalf = "";
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      child: secondHalf.isEmpty
+          ? SelectableText(
+            firstHalf,
+            style: style(fontWeight: FontWeight.normal),
+          )
+          : Column(
+        children: <Widget>[
+          SelectableText(
+              flag ? (firstHalf + "...") : (firstHalf + secondHalf),
+              style: style(fontWeight: FontWeight.normal),
+          ),
+          InkWell(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  flag ? "show more" : "show less",
+                  style: style(color: user.themeColor),
+                ),
+              ],
+            ),
+            onTap: () {
+              setState(() {
+                flag = !flag;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class ColorPage extends StatefulWidget {
+
+  @override
+  _ColorPageState createState() => _ColorPageState();
+}
+
+
+
+
+
+
+
+class _ColorPageState extends State<ColorPage>{
+  Row colorRow({List<Color?> colors = const [] , List<String> colorsStr = const [], List<int> order = const []}) {
+    List<Widget> widgets = [];
+    for (int i = 0; i < 4; i ++) {
+      widgets.add(
+          ElevatedButton(
+            onPressed: () {
+              user.setColor(colorsStr[order[i]]);
+              setState(() {});
+            }, // edit color
+            child: Text(""),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(colors[order[i]])
+            ),
+          )
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: widgets,
+    );
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          elevation: 0.0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+            },
+          color: user.themeColor,
+          ),
+        ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(30, 0, 10, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            colorRow(colors: [Colors.red[400], Colors.red, Colors.redAccent[700], Colors.redAccent[400]],
+                    colorsStr: ["red400", "red","redAccent700", "redAccent400"],
+                    order : [2, 3, 1, 0]),
+            colorRow(colors: [Colors.pinkAccent[100], Colors.pinkAccent, Colors.pink[400], Colors.pink[800]],
+                    colorsStr: ["pinkAccent100", "pinkAccent", "pink400", "pink800"],
+                    order : [0, 1, 2, 3]),
+            // colorRow(colors: [Colors.pink[400], Colors.pinkAccent, Colors.pinkAccent[400], Colors.pink[800]],
+            //     colorsStr: ["pink400", "pinkAccent", "pinkAccent400", "pink800"]),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+// Map _color_hash = {"greenAccent700" : Colors.greenAccent[700],
+//   "black" : Colors.black,
+//   "red400" : Colors.red[400],
+//   "red" : Colors.red,
+//   "redAccent400" : Colors.redAccent[400],
+//   "redAccent700" : Colors.redAccent[700],
+//   "pink400" : Colors.pink[400],
+//   "pinkAccent" : Colors.pinkAccent,
+//   "pinkAccent400" : Colors.pinkAccent[400],
+//   "pink800" : Colors.pink[800]};
+
+
+/*
+Map _color_hash = {"greenAccent700" : Colors.greenAccent[700],
+                    "black" : Colors.black,
+                    "red400" : Colors.red[400],
+                    "red" : Colors.red,
+                    "redAccent400" : Colors.redAccent[400],
+                    "redAccent700" : Colors.redAccent[700]};
+ */

@@ -87,9 +87,7 @@ class Scraper:
 
 	def _get_strain_review(self, soup):
 		div = soup.find('div', class_ = 'panel-body well description')
-		text = div.text
-		review = " ".join(list(takewhile(lambda x: x != '' and '\n' not in x, text.split(' ')[::-1]))[::-1])
-		return review
+		return div.div.next_sibling.text
 
 	def _get_strain_effects(self, soup):
 		divs = soup.find_all('div', class_ = 'panel-body well tags-list')
