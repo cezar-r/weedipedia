@@ -62,11 +62,11 @@ Map _color_hash = {"greenAccent700" : Colors.greenAccent[700],
   "black" : Colors.black,
   "red400" : Colors.red[400],
   "red" : Colors.red,
-  "redAccent400" : Colors.redAccent[400],
+  "red600" : Colors.red[600],
   "redAccent700" : Colors.redAccent[700],
-  "pinkAccent100" : Colors.pinkAccent[100],
-  "pinkAccent" : Colors.pinkAccent,
-  "pinkAccent400" : Colors.pinkAccent[400],
+  "pink300" : Colors.pink[300],
+  "pink600" : Colors.pink[600],
+  "pinkAccent700" : Colors.pinkAccent[700],
   "pink800" : Colors.pink[800]};
 
 
@@ -104,131 +104,6 @@ class AppUser {
 AppUser user = AppUser();
 
 
-// class User {
-//   Color? themeColor;
-//   Color? backgroundColor;
-//   String themeColorStr = 'greenAccent700';
-//   String backgroundColorStr = '';
-//   List<String> saved = [];
-//   Map _data = {};
-//
-//   Map _color_hash = {"greenAccent700" : Colors.greenAccent[700],
-//                     "black" : Colors.black,
-//                     "red400" : Colors.red[400],
-//                     "red" : Colors.red,
-//                     "redAccent400" : Colors.redAccent[400],
-//                     "redAccent700" : Colors.redAccent[700]};
-//
-//
-//   User() {
-//     writeJson();
-//     readJson();
-//   }
-//
-//
-//   void readJson() async {
-//     _data = await readJsonHelper();
-//     themeColor = _getColor("themeColor");
-//     themeColorStr = _data["themeColor"];
-//     backgroundColor = _getColor("backgroundColor");
-//     backgroundColorStr = "black";
-//     saved = _getSaved();
-//
-//   }
-//
-//   Future<Map> readJsonHelper() async {
-//     // // final path = await _localPath;
-//     // // final String response = await rootBundle.loadString('$path/user_info.json');
-//     // // final path = await _localPath;
-//     // // final String response = await rootBundle.loadString('$path/user_info.json');
-//     // final file = await _localFile;
-//     // final response = await file.readAsString();
-//     // final data = await response.toString();
-//     // UserColor usercolor = UserColor.fromJson(jsonDecode(data));
-//     // print(usercolor.themeColor);
-//
-//     // final file = await _localFile;
-//     // final response = await file.readAsString();
-//     // final data = await jsonDecode(response);
-//     // return data['info'][0];
-//     final String response = await rootBundle.loadString('assets/user_info.json');
-//     final data = await json.decode(response);
-//     // print(data);
-//     return data['info'][0];
-//     /*
-//      final String response = await rootBundle.loadString('assets/data2_rfmtd.json');
-//     final data = await json.decode(response);
-//     setState(() {
-//       _data = data["items"];
-//     });
-//     return data['items'];
-//      */
-//   }
-//
-//   Color? _getColor(String key) {
-//     return _color_hash[_data[key]];
-//   }
-//
-//   List<String> _getSaved() {
-//     return _data[saved];
-//   }
-//
-//   void editThemeColor(String key) {
-//     themeColor = _color_hash[key];
-//     themeColorStr = key;
-//     writeJson();
-//     readJson();
-//     // print(themeColorStr);
-//     // print(themeColor.toString());
-//   }
-//
-//   void editBackgroundColor(String key) {
-//     backgroundColor = _color_hash[key];
-//     writeJson();
-//     readJson();
-//   }
-//
-//   void addToSaved(String strainName) {
-//     saved.add(strainName);
-//     writeJson();
-//     readJson();
-//   }
-//
-//   void removeFromSaved(String strainName) {
-//     saved.remove(strainName);
-//     writeJson();
-//     readJson();
-//   }
-//
-//   void writeJson() {
-//     // figure out how to either write to proper local json file or find way to read json file
-//     Map new_info = {"themeColor" : themeColorStr, "backgroundColor" : backgroundColorStr, "saved" : saved};
-//     // print(themeColorStr);
-//     writeOut(new_info);
-//   }
-//
-//   Future<String> get _localPath async {
-//     final directory = await getApplicationDocumentsDirectory();
-//     return directory.path;
-//   }
-//
-//   Future<File> get _localFile async {
-//     final path = await _localPath;
-//     // print("$path/user_info.json");
-//     return File('assets/user_info.json');
-//   }
-//
-//   Future<File> writeOut(Map data) async {
-//     final file = await _localFile;
-//     Map fullData = {"info" : [data.toString()]};
-//     // print(fullData.toString());
-//     // Write the file
-//     return file.writeAsString('$fullData');
-//   }
-// }
-
-// User user = User();
-
 class Post {
   final String title;
   final String description;
@@ -259,7 +134,6 @@ class _HomePageState extends State<Home> {
   void readJson() async {
     List data = await readJsonHelper();
     _data = data;
-    // print(data[0].toString());
   }
 
   _HomePageState() {
@@ -828,12 +702,12 @@ class _ColorPageState extends State<ColorPage>{
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            colorRow(colors: [Colors.red[400], Colors.red, Colors.redAccent[700], Colors.redAccent[400]],
-                    colorsStr: ["red400", "red","redAccent700", "redAccent400"],
+            colorRow(colors: [Colors.red[400], Colors.red, Colors.redAccent[700], Colors.red[600]],
+                    colorsStr: ["red400", "red","redAccent700", "redAccent600"],
                     order : [2, 3, 1, 0]),
-            colorRow(colors: [Colors.pinkAccent[100], Colors.pinkAccent, Colors.pink[400], Colors.pink[800]],
-                    colorsStr: ["pinkAccent100", "pinkAccent", "pink400", "pink800"],
-                    order : [0, 1, 2, 3]),
+            colorRow(colors: [Colors.pink[300], Colors.pinkAccent[700], Colors.pink[600], Colors.pink[800]],
+                    colorsStr: ["pink300", "pinkAccent700", "pink600", "pink800"],
+                    order : [0, 2, 1, 3]),
             // colorRow(colors: [Colors.pink[400], Colors.pinkAccent, Colors.pinkAccent[400], Colors.pink[800]],
             //     colorsStr: ["pink400", "pinkAccent", "pinkAccent400", "pink800"]),
           ],
@@ -843,17 +717,6 @@ class _ColorPageState extends State<ColorPage>{
   }
 }
 
-
-// Map _color_hash = {"greenAccent700" : Colors.greenAccent[700],
-//   "black" : Colors.black,
-//   "red400" : Colors.red[400],
-//   "red" : Colors.red,
-//   "redAccent400" : Colors.redAccent[400],
-//   "redAccent700" : Colors.redAccent[700],
-//   "pink400" : Colors.pink[400],
-//   "pinkAccent" : Colors.pinkAccent,
-//   "pinkAccent400" : Colors.pinkAccent[400],
-//   "pink800" : Colors.pink[800]};
 
 
 /*
