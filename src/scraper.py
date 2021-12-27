@@ -33,7 +33,7 @@ class Scraper:
 	def scrape(self):
 		counter = 1
 		for letter in ascii_lowercase:
-			url = f'https://www.allbud.com/marijuana-strains/search?sort=alphabet&letter={letter.upper()}&results=2000'
+			url = f'https://www.allbud.com/marijuana-strains/search?sort=alphabet&letter={letter}&results=2000'
 			source = requests.get(url).text
 			soup = BeautifulSoup(source, 'html.parser')
 			for strain in soup.find_all('div', class_ ='col-sm-6 col-md-4 col-lg-3'):
