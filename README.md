@@ -14,4 +14,13 @@ All of the data was scraped from [Allbud](https://www.allbud.com/) using [Beauti
 
 ## User Preferences
  - One of the unique features of this app is how it allows the user to pick a theme color from over 56 colors.
-- <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6618.PNG' height = 600 width = 300> <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6619.PNG' height = 600 width = 300>
+ - <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6618.PNG' height = 600 width = 300> <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6619.PNG' height = 600 width = 300>
+
+## TODO
+ - There are still a few updates needed to be made before the app is ready to hit the App Store. Here are some of the updates coming soon:
+   - Recent searches - The app will display recent searches made by the user
+   - Save strains - A feature that allows you to save strains and view them seperately on another page.
+
+## Technologies Used
+ - BeautifulSoup4
+ - Flutter 
