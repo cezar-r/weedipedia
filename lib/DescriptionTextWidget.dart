@@ -30,6 +30,7 @@ class _ReviewTextState extends State<ReviewText> {
       firstHalf = widget.text;
       secondHalf = "";
     }
+    // this is my super cool feature
   }
 
   @override
