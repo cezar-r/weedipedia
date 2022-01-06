@@ -1,10 +1,7 @@
 /* TODO
 Recent Searches
   Find way to only display when keyboard is first opened
-Converter
-  Find way to make dropdown start from the bottom
-  Make input fields slightly bigger? (1.5-2x bigger)
-Keyboard collapse on scroll up
+
 */
 
 /// Home Screen Page
@@ -100,7 +97,6 @@ class _HomePageState extends State<Home> {
     return returnData;
   }
 
-
   int _selectedIndex = 0;
 
   @override
@@ -130,102 +126,84 @@ class _HomePageState extends State<Home> {
       return tiles;
     }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(
-          "Weedipedia",
-          style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine'),
-        ),
-        centerTitle: true,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      onVerticalDragDown: (details) => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
         backgroundColor: Colors.black,
-        elevation: 0.0,
-        automaticallyImplyLeading: false
-      ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-        child: SearchBar<Post>(
-          // suggestions: _getRecentSearches(),
-          searchBarPadding: EdgeInsets.zero,
-          hintText:  "Search a strain",
-          minimumChars: 1,
-          debounceDuration: const Duration(milliseconds: 50),
-          onSearch: search,
-          onItemFound: (Post post, int index) {
-            if (post.title == "No results") {
+        appBar: Constants.appBar(),
+        body: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: SearchBar<Post>(
+            // suggestions: _getRecentSearches(),
+            searchBarPadding: EdgeInsets.zero,
+            hintText:  "Search a strain",
+            minimumChars: 1,
+            debounceDuration: const Duration(milliseconds: 50),
+            onSearch: search,
+            onItemFound: (Post post, int index) {
+              if (post.title == "No results") {
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(0, 100, 0, 0),
+                  alignment: Alignment.center,
+                  child: Text(
+                    "No results",
+                    style: style(color: AppUser.getColor(), fontSize: 15),
+                  ),
+                );
+              }
               return Container(
-                margin: const EdgeInsets.fromLTRB(0, 100, 0, 0),
-                alignment: Alignment.center,
-                child: Text(
-                  "No results",
-                  style: style(color: AppUser.getColor(), fontSize: 15),
+                margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.fromLTRB(5, 0, 20, 0),
+                  trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppUser.getColor(),
+                  ),
+                  onTap: () {
+                    AppUser.addRecent(post.title);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(post.title, _data, "Home")));
+                  },
+                  title: Text(
+                    post.title,
+                    style: style(color: AppUser.getColor(), fontSize: 16),
+                  ),
+                  selectedTileColor: Colors.grey[900],
+                  subtitle: Text(
+                    post.description,
+                    style: style(),
+                  ),
                 ),
               );
-            }
-            return Container(
-              margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: ListTile(
-                contentPadding: const EdgeInsets.fromLTRB(5, 0, 20, 0),
-                trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    color: AppUser.getColor(),
-                ),
-                onTap: () {
-                  AppUser.addRecent(post.title);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(post.title, _data, "Home")));
-                },
-                title: Text(
-                  post.title,
-                  style: style(color: AppUser.getColor(), fontSize: 16),
-                ),
-                selectedTileColor: Colors.grey[900],
-                subtitle: Text(
-                  post.description,
-                  style: style(),
-                ),
+            },
+            textStyle: style(fontSize: 15),
+            icon: const Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            cancellationText: Text(
+              "Clear",
+              style: style(color: Colors.grey, fontSize: 15)
+            ),
+            loader: Center(
+              child: Text(
+                "loading...",
+                style: style(color: AppUser.getColor(), fontSize: 15)
               ),
-            );
-          },
-          textStyle: style(fontSize: 15),
-          icon: const Icon(
-            Icons.search,
-            color: Colors.white,
-          ),
-          cancellationText: Text(
-            "Clear",
-            style: style(color: Colors.grey, fontSize: 15)
-          ),
-          loader: Center(
-            child: Text(
-              "loading...",
-              style: style(color: AppUser.getColor(), fontSize: 15)
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.grey[900],
-        iconSize: 35,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_rounded),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sync_alt),
-            label: 'Convert',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_rounded),
-            label: 'Profile',
-          ),
-        ],
-        selectedItemColor: AppUser.getColor(),
-        currentIndex: _selectedIndex,
-        onTap: _goToPage,
-        selectedIconTheme: IconThemeData(color: AppUser.getColor(), size: 45),
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.grey[900],
+          iconSize: 35,
+          items: Constants.navBarItems,
+          selectedItemColor: AppUser.getColor(),
+          currentIndex: _selectedIndex,
+          onTap: _goToPage,
+          selectedIconTheme: IconThemeData(color: AppUser.getColor(), size: 45),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+        ),
       ),
     );
   }

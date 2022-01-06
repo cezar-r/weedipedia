@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'Constants.dart';
 import 'ConvertPage.dart';
 import 'Helpers.dart';
 import 'ResultPage.dart';
@@ -59,7 +60,7 @@ class _ProfilePage extends State<ProfilePage> {
               },
               title: Text(
                 m['name'],
-                style: style(color: AppUser.getColor(), fontSize: 14),
+                style: style(color: AppUser.getColor(), fontSize: 15),
               ),
               contentPadding: const EdgeInsets.fromLTRB(5, 0, 15, 0),
               trailing: Icon(
@@ -119,20 +120,7 @@ class _ProfilePage extends State<ProfilePage> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey[900],
         iconSize: 35,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_rounded),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sync_alt),
-            label: 'Convert',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_rounded),
-            label: 'Profile',
-          ),
-        ],
+        items: Constants.navBarItems,
         selectedItemColor: AppUser.getColor(),
         currentIndex: _selectedIndex,
         onTap: _goToPage,

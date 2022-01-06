@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'Helpers.dart';
+import 'app_user.dart';
+
 /// hashmap of the color options and their string representations
 class Constants {
 
@@ -57,6 +60,34 @@ class Constants {
     return _data;
   }
 
+  static List<BottomNavigationBarItem> navBarItems = <BottomNavigationBarItem>[
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.search_rounded),
+      label: 'Search',
+    ),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.sync_alt),
+      label: 'Convert',
+    ),
+    const BottomNavigationBarItem(
+      icon: Icon(Icons.account_circle_rounded),
+      label: 'Profile',
+    ),
+  ];
+
+
+  static AppBar appBar() {
+    return AppBar(
+      title: Text(
+        "Weedipedia",
+        style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine'),
+      ),
+      centerTitle: true,
+      backgroundColor: Colors.black,
+      elevation: 0.0,
+      automaticallyImplyLeading: false,
+    );
+  }
 
 }
 

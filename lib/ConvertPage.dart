@@ -86,7 +86,7 @@ class _ConvertPage extends State<ConvertPage> {
                   children: <Widget>[
                     CupertinoButton(
                       child: const Text(''),
-                      onPressed: () {FocusManager.instance.primaryFocus?.unfocus();},
+                      onPressed: () {},
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16.0,
                         vertical: 5.0,
@@ -141,16 +141,7 @@ class _ConvertPage extends State<ConvertPage> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(
-          title: Text(
-            "Weedipedia",
-            style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine'),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.black,
-          elevation: 0.0,
-          automaticallyImplyLeading: false,
-        ),
+        appBar: Constants.appBar(),
         body: Container(
          padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
           child: Column(
@@ -250,20 +241,7 @@ class _ConvertPage extends State<ConvertPage> {
           backgroundColor: Colors.grey[900],
           iconSize: 35,
           // type: BottomNavigationBarType.shifting,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search_rounded),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.sync_alt),
-              label: 'Convert',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle_rounded),
-              label: 'Profile',
-            ),
-          ],
+          items: Constants.navBarItems,
           selectedItemColor: AppUser.getColor(),
           currentIndex: _selectedIndex,
           onTap: _goToPage,
