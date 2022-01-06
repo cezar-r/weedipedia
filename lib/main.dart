@@ -4,6 +4,7 @@ Recent Searches
 Converter
   Find way to make dropdown start from the bottom
   Make input fields slightly bigger? (1.5-2x bigger)
+Keyboard collapse on scroll up
 */
 
 /// Home Screen Page

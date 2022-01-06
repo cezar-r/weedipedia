@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/ProfilePage.dart';
 
@@ -70,152 +71,174 @@ class _ConvertPage extends State<ConvertPage> {
 
     var _weights = ['mg', 'g', '1/8', '1/4', '1/2', 'oz', 'kg', 'lb'];
 
+    void showPicker(String from) {
+      showCupertinoModalPopup(
+          context: context,
+          builder: (BuildContext builder) {
+            return Container(
+                height: MediaQuery
+                    .of(context)
+                    .copyWith()
+                    .size
+                    .height * 0.25,
+                color: Colors.black,
+                child: CupertinoPicker(
+                  children: _weights.map((x) => Text(x, style: style(fontSize: 16))).toList(),
+                  onSelectedItemChanged: (value) {
+                    Text text = Text(_weights[value], style: style(),);
+                    if (from == 'from') {
+                      c._convertFrom = text.data.toString();
+                    } else {
+                      c._convertTo = text.data.toString();
+                    }
+                    setState(() {
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(
-          "Weedipedia",
-          style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine'),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.black,
-        elevation: 0.0,
-        automaticallyImplyLeading: false,
-      ),
-      body: Container(
-       padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(120, 0, 120, 0),
-              child: TextField(
-                style: style(fontSize: 18),
-                controller: c._controllerFrom,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  hintText: '28',
-                  hintStyle: style(color: Colors.grey[600], fontSize: 16),
-                  fillColor: Colors.grey[900],
-                  filled: true,
-                  contentPadding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
-                  isDense: true,
-                ),
-              ),
-            ),
-            DropdownButtonHideUnderline(
-              child: DropdownButtonFormField<String>(
-                hint: const Text('Amount'),
-                iconEnabledColor: AppUser.getColor(),
-                style: style(fontSize: 16),
-                dropdownColor: Colors.black,
-                value: c._convertFrom,
-                onChanged: (String? newValue) {
-                  c._convertFrom = newValue;
-                    // state.didChange(newValue);
-                },
-                items: _weights.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(130, 10, 120, 10),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: Icon(
-                Icons.swap_vert_rounded,
-                color: AppUser.getColor(),
-                size: 70,
-              ),
-              // onPressed: c._convert,
-              onPressed: (){
-                setState(() {
-                  c._convert();
-                });
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) return AppUser.getColor()!;
-                    return Colors.black;
+                    });
                   },
+                  itemExtent: 50,
+                  diameterRatio: 4,
+                  useMagnifier: true,
+                  magnification: 1.1,
+                )
+            );
+          }
+      );
+    }
+
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          title: Text(
+            "Weedipedia",
+            style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine'),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.black,
+          elevation: 0.0,
+          automaticallyImplyLeading: false,
+        ),
+        body: Container(
+         padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(120, 0, 120, 0),
+                child: TextField(
+                  style: style(fontSize: 18),
+                  controller: c._controllerFrom,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    hintText: '28',
+                    hintStyle: style(color: Colors.grey[600], fontSize: 16),
+                    fillColor: Colors.grey[900],
+                    filled: true,
+                    contentPadding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
+                    isDense: true,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(120, 0, 120, 0),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                height : 40,
-                width: 250,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  color: Colors.grey[900],
-                ),
-                child : Text(
-                  c._converted ? c._convertedAmount : "0.99",
-                  style: style(color: c._converted ? Colors.white : Colors.grey[600], fontSize: 16),
-                ),
-              ),
-            ),
-            DropdownButtonHideUnderline(
-              child: DropdownButtonFormField<String>(
-                hint: const Text('Amount'),
-                iconEnabledColor: AppUser.getColor(),
-                style: style(fontSize: 16),
-                dropdownColor: Colors.black,
-                value: c._convertTo,
-                isDense: true,
-                onChanged: (String? newValue) {
-                    c._convertTo = newValue;
+              ElevatedButton(
+                child: Text(
+                    c._convertFrom!,
+                    style: style(fontSize: 16),),
+                onPressed: (){
+                  showPicker("from");
                 },
-                items: _weights.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(130, 10, 120, 10),
+                style: ElevatedButton.styleFrom(
+                  side: BorderSide(
+                    width: .5,
+                    color: AppUser.getColor()!,
+                  ),
+                  primary: Colors.black,
                 ),
               ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                child: Icon(
+                  Icons.swap_vert_rounded,
+                  color: AppUser.getColor(),
+                  size: 70,
+                ),
+                // onPressed: c._convert,
+                onPressed: (){
+                  setState(() {
+                    c._convert();
+                  });
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.pressed)) return AppUser.getColor()!;
+                      return Colors.black;
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(120, 0, 120, 0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                  height : 40,
+                  width: 250,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                    color: Colors.grey[900],
+                  ),
+                  child : Text(
+                    c._converted ? c._convertedAmount : "0.99",
+                    style: style(color: c._converted ? Colors.white : Colors.grey[600], fontSize: 16),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                child: Text(
+                  c._convertTo!,
+                  style: style(fontSize: 16),),
+                onPressed: (){
+                  showPicker("to");
+                },
+                style: ElevatedButton.styleFrom(
+                  side: BorderSide(
+                    width: .5,
+                    color: AppUser.getColor()!,
+                  ),
+                  primary: Colors.black,
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.grey[900],
+          iconSize: 35,
+          // type: BottomNavigationBarType.shifting,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search_rounded),
+              label: 'Search',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.sync_alt),
+              label: 'Convert',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle_rounded),
+              label: 'Profile',
             ),
           ],
+          selectedItemColor: AppUser.getColor(),
+          currentIndex: _selectedIndex,
+          onTap: _goToPage,
+          selectedIconTheme: IconThemeData(color: AppUser.getColor(), size: 40),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.grey[900],
-        iconSize: 35,
-        // type: BottomNavigationBarType.shifting,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search_rounded),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sync_alt),
-            label: 'Convert',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_rounded),
-            label: 'Profile',
-          ),
-        ],
-        selectedItemColor: AppUser.getColor(),
-        currentIndex: _selectedIndex,
-        onTap: _goToPage,
-        selectedIconTheme: IconThemeData(color: AppUser.getColor(), size: 40),
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
       ),
     );
   }
