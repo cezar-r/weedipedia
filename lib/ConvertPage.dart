@@ -183,9 +183,9 @@ class _ConvertPage extends State<ConvertPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 child: Icon(
-                  Icons.swap_vert_rounded,
+                  Icons.arrow_downward_rounded,
                   color: AppUser.getColor(),
-                  size: 70,
+                  size: 50,
                 ),
                 // onPressed: c._convert,
                 onPressed: (){
