@@ -6,8 +6,8 @@
 import 'package:flutter/material.dart';
 
 import 'Helpers.dart';
+import 'ProfilePage.dart';
 import 'app_user.dart';
-import 'main.dart';
 
 class ColorPage extends StatefulWidget {
   const ColorPage({Key? key}) : super(key: key);
@@ -42,8 +42,9 @@ class _ColorPageState extends State<ColorPage>{
               height : 90,
               child: ElevatedButton(
                 onPressed: () {
-                  AppUser.setColor(colorsStr[order[i]]);
-                  setState(() {});
+                  setState(() {
+                    AppUser.setColor(colorsStr[order[i]]);
+                  });
                 }, // edit color
                 child: const Text(""),
                 style: ButtonStyle(
@@ -69,8 +70,9 @@ class _ColorPageState extends State<ColorPage>{
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
               child: ElevatedButton(
                 onPressed: () {
-                  AppUser.setColor(colorsStr[order[i]]);
-                  setState(() {});
+                  setState(() {
+                    AppUser.setColor(colorsStr[order[i]]);
+                  });
                 }, // edit color
                 child: const Text(""),
                 style: ButtonStyle(
@@ -108,7 +110,8 @@ class _ColorPageState extends State<ColorPage>{
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+            // Navigator.pop(context);
           },
           color: AppUser.getColor(),
         ),

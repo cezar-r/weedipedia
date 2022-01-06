@@ -1,22 +1,23 @@
 /* TODO
 Recent Searches
-Saved list
-  Save strains to a list
-  Add save button to each strain
+  Find way to only display when keyboard is first opened
+Converter
+  Find way to make dropdown start from the bottom
+  Make input fields slightly bigger? (1.5-2x bigger)
 */
 
 /// Home Screen Page
 
 import 'dart:collection';
-import 'dart:convert';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:myapp/ProfilePage.dart';
 
+import 'Constants.dart';
+import 'ConvertPage.dart';
 import 'Helpers.dart';
 import 'ResultPage.dart';
 import 'app_user.dart';
-import 'color_page.dart';
 
 
 void main() {
@@ -52,24 +53,8 @@ class _HomePageState extends State<Home> {
     AppUser.init();
   }
 
-  /// helper function that reads the JSON file that contains all the data
-  Future<List> readJsonHelper() async {
-    final String response = await rootBundle.loadString('assets/data2_rfmtd.json');
-    final data = await json.decode(response);
-    setState(() {
-      _data = data["items"];
-    });
-    return data['items'];
-  }
-
-  /// parent function that reads the JSON file
-  void readJson() async {
-    List data = await readJsonHelper();
-    _data = data;
-  }
-
   _HomePageState() {
-    readJson();
+    _data = Constants.data();
   }
 
   /// finds all strains that start with the letters passed in as String search
@@ -115,9 +100,34 @@ class _HomePageState extends State<Home> {
   }
 
 
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+
+    /// navigates to page on navigation bar
+    void _goToPage(int index) {
+      if (index == _selectedIndex) {
+        return;
+      } else if (index == 1) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const ConvertPage()));
+      } else if (index == 2) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+      }
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+
+    /// generates a list of recent searches
+    List<Post> _getRecentSearches() {
+      List<Post> tiles = [];
+      List recents = AppUser.getRecent();
+      for (String recent in recents.reversed) {
+        tiles.add(Post(recent, ""));
+      }
+      return tiles;
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -129,17 +139,12 @@ class _HomePageState extends State<Home> {
         centerTitle: true,
         backgroundColor: Colors.black,
         elevation: 0.0,
-        leading: IconButton(
-          icon: const Icon(Icons.settings_rounded),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const ColorPage())); // goes to settings page
-          },
-          color: Colors.white,
-        ),
+        automaticallyImplyLeading: false
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: SearchBar<Post>(
+          // suggestions: _getRecentSearches(),
           searchBarPadding: EdgeInsets.zero,
           hintText:  "Search a strain",
           minimumChars: 1,
@@ -165,7 +170,8 @@ class _HomePageState extends State<Home> {
                     color: AppUser.getColor(),
                 ),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(post.title, _data)));
+                  AppUser.addRecent(post.title);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResultPage(post.title, _data, "Home")));
                 },
                 title: Text(
                   post.title,
@@ -195,6 +201,30 @@ class _HomePageState extends State<Home> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.grey[900],
+        iconSize: 35,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search_rounded),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.sync_alt),
+            label: 'Convert',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_rounded),
+            label: 'Profile',
+          ),
+        ],
+        selectedItemColor: AppUser.getColor(),
+        currentIndex: _selectedIndex,
+        onTap: _goToPage,
+        selectedIconTheme: IconThemeData(color: AppUser.getColor(), size: 45),
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
       ),
     );
   }

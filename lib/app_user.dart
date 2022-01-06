@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,5 +37,62 @@ class AppUser {
   /// setter method that sets a new color
   static void setColor(String newColor) {
     _prefsInstance?.setString('color', newColor);
+  }
+
+  /// getter method that gets the list of saved strains
+  static List getSaved() {
+    String data = _prefsInstance?.getString('savedStrain') ?? '[]';
+    return json.decode(data);
+  }
+
+  /// setter method that adds another strain to the saved list
+  static void addSaved(Map strainName) {
+    List saved = getSaved();
+    saved.add(strainName);
+    String strSaved = json.encode(saved);
+    _prefsInstance?.setString('savedStrain', strSaved);
+  }
+
+  /// removes a strain from the saved list
+  static void removeSaved(Map strainName) {
+    List saved = getSaved();
+    List newSaved = [];
+    for (Map m in saved) {
+      if (m['name'] != strainName['name']) {
+        newSaved.add(m);
+      }
+    }
+    String strSaved = json.encode(newSaved);
+    _prefsInstance?.setString('savedStrain', strSaved);
+  }
+
+  /// checks if a strain exists
+  static bool savedContains(Map data) {
+    List saved = getSaved();
+    for (Map m in saved) {
+      if (m['name'] == data['name']) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// gets the recent strains searched
+  static List getRecent() {
+    String data = _prefsInstance?.getString('recent') ?? '[]';
+    return json.decode(data);
+  }
+
+  /// adds strain to recent searches
+  static void addRecent(String strainName) {
+    List recent = getRecent();
+    if (recent.contains(strainName)) {
+      return;
+    } else if (recent.length == 6) {
+      recent.remove(recent[0]); // keeps recent to 6 most recent searches
+    }
+    recent.add(strainName);
+    String strSaved = json.encode(recent);
+    _prefsInstance?.setString('recent', strSaved);
   }
 }

@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// hashmap of the color options and their string representations
 class Constants {
+
+  static List _data = [];
+
   static Map colorHashMap = {"black": Colors.black,
     "red400": Colors.red[400], "red": Colors.red, "red600": Colors.red[600], "redAccent700": Colors.redAccent[700],
     "pink300": Colors.pink[300], "pink600": Colors.pink[600], "pinkAccent700": Colors.pinkAccent[700], "pink800": Colors.pink[800],
@@ -18,4 +24,39 @@ class Constants {
     "orangeAccent700" : Colors.orangeAccent[700], "orangeAccent400" : Colors.orangeAccent[400], "orangeAccent" : Colors.orangeAccent, "orangeAccent100": Colors.orangeAccent[100],
     "deepOrangeAccent700" : Colors.deepOrangeAccent[700], "deepOrangeAccent400" : Colors.deepOrangeAccent[400], "deepOrangeAccent" : Colors.deepOrangeAccent, "deepOrangeAccent100": Colors.deepOrangeAccent[100],
   };
+
+  static Map convertFrom = {
+    "mg" : 1,
+    "g" : 1000,
+    "1/8" : 3500,
+    "1/4" : 7000,
+    "1/2" : 14000,
+    "oz" : 28350,
+    "lb" : 453592,
+    "kg" : 1000000,
+  };
+
+  /// helper function that reads the JSON file that contains all the data
+  static Future<List> readJsonHelper() async {
+    final String response = await rootBundle.loadString('assets/data2_rfmtd.json');
+    final data = await json.decode(response);
+    return data['items'];
+  }
+
+  /// parent function that reads the JSON file
+  static void readJson() async {
+    List data = await readJsonHelper();
+    _data = data;
+  }
+
+  /// returns strain data
+  static List data() {
+    if (_data.isEmpty) {
+      readJson();
+    }
+    return _data;
+  }
+
+
 }
+

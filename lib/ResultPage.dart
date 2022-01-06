@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'DescriptionTextWidget.dart';
 import 'Helpers.dart';
+import 'ProfilePage.dart';
 import 'app_user.dart';
 
 
@@ -12,19 +13,21 @@ class ResultPage extends StatefulWidget {
   // const ResultPage({Key? key}) : super(key: key);
   String name = '';
   List data = [];
+  String fromPage = '';
 
-  ResultPage(this.name, this.data, {Key? key}) : super(key: key);
+  ResultPage(this.name, this.data, this.fromPage, {Key? key}) : super(key: key);
 
   @override
-  _ResultPageState createState() => _ResultPageState(name, data);
+  _ResultPageState createState() => _ResultPageState(name, data, fromPage);
 }
 
 class _ResultPageState extends State<ResultPage> {
   Map<String, dynamic> _data = <String, dynamic>{};
   String name = '';
   List data = [];
+  String fromPage = '';
 
-  _ResultPageState(String name, List data) {
+  _ResultPageState(String name, List data, this.fromPage) {
     lookup(name, data);
   }
 
@@ -185,7 +188,11 @@ class _ResultPageState extends State<ResultPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.pop(context);
+            if (fromPage == 'Home') {
+              Navigator.pop(context);
+            } else if (fromPage == 'Profile') {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+            }
           },
           color: AppUser.getColor(),
         ),
@@ -194,9 +201,46 @@ class _ResultPageState extends State<ResultPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            printTop("${_data['name']}", 25.0), // Name of strain
-            printTop("${_data['strain_type']}", 18.0), // Type of strain
-            printTop("${_data['strain_type_strength']}", 12.0), // Percent of type of strain
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    printTop("${_data['name']}", 25.0), // Name of strain
+                    printTop("${_data['strain_type']}", 18.0), // Type of strain
+                    printTop("${_data['strain_type_strength']}", 12.0), // Percent of type of strain
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          if (AppUser.savedContains(_data)) {
+                            AppUser.removeSaved(_data);
+                          } else {
+                            AppUser.addSaved(_data);
+                          }
+                        });
+                      },
+                      child: Icon(
+                        Icons.favorite_rounded,
+                        size: 35,
+                        color: AppUser.savedContains(_data) ? AppUser.getColor() : Colors.grey[900],
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.black)
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ],
+            ),
+            // printTop("${_data['name']}", 25.0), // Name of strain
+            // printTop("${_data['strain_type']}", 18.0), // Type of strain
+            // printTop("${_data['strain_type_strength']}", 12.0), // Percent of type of strain
             Container(
               margin: const EdgeInsets.fromLTRB(10, 30, 10, 0),
               child: Row(
