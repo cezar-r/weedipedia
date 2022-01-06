@@ -53,6 +53,8 @@ class _ConvertPage extends State<ConvertPage> {
   @override
   Widget build(BuildContext context) {
 
+    var _weights = ['mg', 'g', '1/8', '1/4', '1/2', 'oz', 'kg', 'lb'];
+
     /// builds the list of saved strains
     ///
     /// gets saved list from shared preferences and builds a list of ListTile's
@@ -69,37 +71,67 @@ class _ConvertPage extends State<ConvertPage> {
       });
     }
 
-    var _weights = ['mg', 'g', '1/8', '1/4', '1/2', 'oz', 'kg', 'lb'];
-
+    /// creates the picker
+    ///
+    /// picker is used to decide what metric the user wants to use when converting
     void showPicker(String from) {
       showCupertinoModalPopup(
           context: context,
           builder: (BuildContext builder) {
-            return Container(
-                height: MediaQuery
-                    .of(context)
-                    .copyWith()
-                    .size
-                    .height * 0.25,
-                color: Colors.black,
-                child: CupertinoPicker(
-                  children: _weights.map((x) => Text(x, style: style(fontSize: 16))).toList(),
-                  onSelectedItemChanged: (value) {
-                    Text text = Text(_weights[value], style: style(),);
-                    if (from == 'from') {
-                      c._convertFrom = text.data.toString();
-                    } else {
-                      c._convertTo = text.data.toString();
-                    }
-                    setState(() {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    CupertinoButton(
+                      child: const Text(''),
+                      onPressed: () {FocusManager.instance.primaryFocus?.unfocus();},
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 5.0,
+                      ),
+                    ),
+                    CupertinoButton(
+                      child: Text(
+                        'Confirm',
+                        style: TextStyle(color: AppUser.getColor()),
+                      ),
+                      onPressed: () {Navigator.of(context, rootNavigator: true).pop();},
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 5.0,
+                      ),
+                    )
+                  ],
+                ),
+                Container(
+                  height: MediaQuery
+                      .of(context)
+                      .copyWith()
+                      .size
+                      .height * 0.25,
+                  color: Colors.black,
+                  child: CupertinoPicker(
+                    children: _weights.map((x) => Text(x, style: style(fontSize: 18))).toList(),
+                    onSelectedItemChanged: (value) {
+                      Text text = Text(_weights[value], style: style(),);
+                      if (from == 'from') {
+                        c._convertFrom = text.data.toString();
+                      } else {
+                        c._convertTo = text.data.toString();
+                      }
+                      setState(() {
 
-                    });
-                  },
-                  itemExtent: 50,
-                  diameterRatio: 4,
-                  useMagnifier: true,
-                  magnification: 1.1,
-                )
+                      });
+                    },
+                    itemExtent: 50,
+                    diameterRatio: 4,
+                    useMagnifier: true,
+                    magnification: 1.1,
+                  )
+              ),
+            ]
             );
           }
       );
