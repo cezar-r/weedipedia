@@ -227,10 +227,11 @@ class _ResultPageState extends State<ResultPage> {
                       child: Icon(
                         Icons.favorite_rounded,
                         size: 35,
-                        color: AppUser.savedContains(_data) ? AppUser.getColor() : Colors.grey[900],
+                        color: AppUser.savedContains(_data) ? AppUser.getColor() : Colors.white,
                       ),
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.black)
+                      style: ElevatedButton.styleFrom(
+                        splashFactory: NoSplash.splashFactory,
+                        primary: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 40),

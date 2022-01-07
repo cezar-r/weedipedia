@@ -9,23 +9,53 @@ import 'main.dart';
 
 /// A class that represents a converter to convert different weight metrics
 class Converter {
-  String? _convertFrom = 'g';
-  String? _convertTo = 'oz';
+  String? _convertFrom = 'grams';
+  String? _convertTo = 'ounces';
   String _convertedAmount = '0.99';
   bool _converted = false;
   final TextEditingController _controllerFrom = TextEditingController();
 
   Converter();
 
+  /// does the conversion
   void _convert() {
-    if (_controllerFrom.text == '') {
-      _controllerFrom.text = '28';
+    String ogAmount = _controllerFrom.text;
+    if (ogAmount == '') {
+      ogAmount = "28";
     }
-    var _amount = int.parse(_controllerFrom.text);
+    var _amount = int.parse(ogAmount);
     int mg = Constants.convertFrom[_convertFrom] * _amount;
     num displayAmount = mg / Constants.convertFrom[_convertTo];
     _converted = true;
     _convertedAmount = displayAmount.toStringAsFixed(2);
+  }
+
+  /// Returns a list of text widgets that describe the conversion
+  /// "1000 milligrams is about 1 gram"
+  List<Text> strRep() {
+    List<Text> list = [];
+    String ogAmount = _controllerFrom.text;
+    if (ogAmount == '') {
+      ogAmount = '28';
+    }
+    list.add(Text(
+      "$ogAmount $_convertFrom",
+      style: style(color: AppUser.getColor(), fontSize: 18),
+      overflow: TextOverflow.ellipsis,
+    ));
+    list.add(Text(
+      " is about ",
+      style: style(fontSize: 18),
+      overflow: TextOverflow.ellipsis,
+    ));
+    list.add(Text(
+        "$_convertedAmount $_convertTo",
+        style: style(color: AppUser.getColor(), fontSize: 18),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+
+    return list;
   }
 }
 
@@ -47,13 +77,12 @@ class _ConvertPage extends State<ConvertPage> {
   }
 
   int _selectedIndex = 1;
-
   Converter c = Converter();
 
   @override
   Widget build(BuildContext context) {
 
-    var _weights = ['mg', 'g', '1/8', '1/4', '1/2', 'oz', 'kg', 'lb'];
+    var _weights = ['milligrams', 'grams', 'eighths', 'quads', 'halves', 'ounces', 'kilograms', 'pounds'];
 
     /// builds the list of saved strains
     ///
@@ -62,9 +91,21 @@ class _ConvertPage extends State<ConvertPage> {
       if (index == _selectedIndex) {
         return;
       } else if (index == 0) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => const Home(),
+            transitionDuration: Duration.zero,
+          ),
+        );
       } else if (index == 2) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => const ProfilePage(),
+            transitionDuration: Duration.zero,
+          ),
+        );
       }
       setState(() {
         _selectedIndex = index;
@@ -118,8 +159,10 @@ class _ConvertPage extends State<ConvertPage> {
                       Text text = Text(_weights[value], style: style(),);
                       if (from == 'from') {
                         c._convertFrom = text.data.toString();
+                        c._convert();
                       } else {
                         c._convertTo = text.data.toString();
+                        c._convert();
                       }
                       setState(() {
 
@@ -139,102 +182,168 @@ class _ConvertPage extends State<ConvertPage> {
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      onPanUpdate: (dis) {
+        if (dis.delta.dx > 0) {
+          Navigator.push(context, SlideLeftRoute(page: const Home()));
+        } else if (dis.delta.dx < 0) {
+          Navigator.push(context, SlideRightRoute(page: const ProfilePage()));
+        }
+      },
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: Constants.appBar(),
         body: Container(
          padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
           child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(120, 0, 120, 0),
-                child: TextField(
-                  style: style(fontSize: 18),
-                  controller: c._controllerFrom,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+            children: <Widget>[Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppUser.getColor()!,
+                        width: 2
+                      ),
+                      borderRadius: BorderRadius.circular(6.0),
                     ),
-                    hintText: '28',
-                    hintStyle: style(color: Colors.grey[600], fontSize: 16),
-                    fillColor: Colors.grey[900],
-                    filled: true,
-                    contentPadding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
-                    isDense: true,
+                    height: 100,
+                    width: 150,
+                    child: Column(
+                      children: <Widget>[
+                       TextField(
+                            onChanged: (text) {
+                              c._convert();
+                              setState(() {
+                              });
+                            },
+                            style: style(fontSize: 20),
+                            controller: c._controllerFrom,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: '28',
+                              hintStyle: style(color: Colors.grey[600], fontSize: 20),
+                              fillColor: Colors.grey[900],
+                              filled: true,
+                              contentPadding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
+                              isDense: true,
+                            ),
+                          ),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: SizedBox(
+                            height: 30,
+                            width: 150,
+                            child: ElevatedButton(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    c._convertFrom!,
+                                    style: style(fontSize: 14),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        showPicker("from");
+                                      },
+                                      icon: Icon(
+                                        Icons.arrow_drop_down_sharp,
+                                        color: AppUser.getColor(),
+
+                                      ),
+                                  )
+                                ]
+                              ),
+                              onPressed: (){
+                                showPicker("from");
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.black,
+                                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              ElevatedButton(
-                child: Text(
-                    c._convertFrom!,
-                    style: style(fontSize: 16),),
-                onPressed: (){
-                  showPicker("from");
-                },
-                style: ElevatedButton.styleFrom(
-                  side: BorderSide(
-                    width: .5,
-                    color: AppUser.getColor()!,
-                  ),
-                  primary: Colors.black,
+                Text(
+                  "≈",
+                  style: style(fontSize: 40),
                 ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                child: Icon(
-                  Icons.arrow_downward_rounded,
-                  color: AppUser.getColor(),
-                  size: 50,
-                ),
-                // onPressed: c._convert,
-                onPressed: (){
-                  setState(() {
-                    c._convert();
-                  });
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.pressed)) return AppUser.getColor()!;
-                      return Colors.black;
-                    },
+                Flexible(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: AppUser.getColor()!,
+                          width: 2.5
+                      ),
+                      borderRadius: BorderRadius.circular(6.0),
+                    ),
+                    height: 100,
+                    width: 150,
+                    child: Column(
+                      children: <Widget>[
+                          Container(
+                            height: 50,
+                            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            color: Colors.grey[900],
+                            child : Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                c._converted ? c._convertedAmount : "0.99",
+                                style: style(color: c._converted ? Colors.white : Colors.grey[600], fontSize: 20),
+                              ),
+                            ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: SizedBox(
+                            height: 30,
+                            width: 150,
+                            child: ElevatedButton(
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      c._convertTo!,
+                                      style: style(fontSize: 14),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        showPicker("to");
+                                      },
+                                      icon: Icon(
+                                        Icons.arrow_drop_down_sharp,
+                                        color: AppUser.getColor(),
+                                      ),
+                                    )
+                                  ]
+                              ),
+                              onPressed: (){
+                                showPicker("to");
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.black,
+                                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(120, 0, 120, 0),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                  height : 40,
-                  width: 250,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                    color: Colors.grey[900],
-                  ),
-                  child : Text(
-                    c._converted ? c._convertedAmount : "0.99",
-                    style: style(color: c._converted ? Colors.white : Colors.grey[600], fontSize: 16),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                child: Text(
-                  c._convertTo!,
-                  style: style(fontSize: 16),),
-                onPressed: (){
-                  showPicker("to");
-                },
-                style: ElevatedButton.styleFrom(
-                  side: BorderSide(
-                    width: .5,
-                    color: AppUser.getColor()!,
-                  ),
-                  primary: Colors.black,
-                ),
-              ),
-            ],
+              ],
+            ),
+            const SizedBox(height: 40,),
+            Wrap(
+              children: c.strRep(),
+              runSpacing: 5.0,
+              spacing: 5.0,
+            ),
+          ]
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(

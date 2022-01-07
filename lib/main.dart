@@ -2,8 +2,21 @@
 Recent Searches
   Find way to only display when keyboard is first opened
 
+Visuals TODO
+DONE: Get rid of animations between screens
+DONE: Make unfavorited heart slightly brighter
+DONE: Convert Page
+  DONE: Possibly restyle page (horizontal layout)
+  DONE: Use equals sign instead of arrow
+  DONE: Auto convert when weight is being typed
+  DONE: Make metric button borders thicker
+  DONE: When convertTo or convertFrom is edited, perform calculation
+  DONE: Add sentence to converter page (1000 mg is about 1g)
+DONE: Get rid of press animation on heart button
+DONE: Swipe to navigate
+  Animations
+Loading Screen
 */
-
 /// Home Screen Page
 
 import 'dart:collection';
@@ -19,9 +32,13 @@ import 'app_user.dart';
 
 
 void main() {
-  //AppUser.init();
-  runApp(const MaterialApp(
-    home: Home()
+  runApp(MaterialApp(
+    home: const Home(),
+    theme: ThemeData(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+    ),
   ));
 }
 
@@ -38,7 +55,6 @@ class Home extends StatefulWidget {
 
   @override
   _HomePageState createState() => _HomePageState();
-
 }
 
 class _HomePageState extends State<Home> {
@@ -107,28 +123,47 @@ class _HomePageState extends State<Home> {
       if (index == _selectedIndex) {
         return;
       } else if (index == 1) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const ConvertPage()));
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const ConvertPage()));
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => const ConvertPage(),
+            transitionDuration: Duration.zero,
+          ),
+        );
       } else if (index == 2) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => const ProfilePage(),
+            transitionDuration: Duration.zero,
+          ),
+        );
       }
       setState(() {
         _selectedIndex = index;
       });
     }
 
-    /// generates a list of recent searches
-    List<Post> _getRecentSearches() {
-      List<Post> tiles = [];
-      List recents = AppUser.getRecent();
-      for (String recent in recents.reversed) {
-        tiles.add(Post(recent, ""));
-      }
-      return tiles;
-    }
+    // /// generates a list of recent searches
+    // List<Post> _getRecentSearches() {
+    //   List<Post> tiles = [];
+    //   List recents = AppUser.getRecent();
+    //   for (String recent in recents.reversed) {
+    //     tiles.add(Post(recent, ""));
+    //   }
+    //   return tiles;
+    // }
 
     return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       onVerticalDragDown: (details) => FocusManager.instance.primaryFocus?.unfocus(),
+      onPanUpdate: (dis) {
+        if (dis.delta.dx > 0) {
+          return; // can't go left from home page
+        } else if (dis.delta.dx < 0) {
+          Navigator.push(context, SlideRightRoute(page: const ConvertPage()));
+        }
+      },
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: Constants.appBar(),

@@ -35,9 +35,21 @@ class _ProfilePage extends State<ProfilePage> {
       if (index == _selectedIndex) {
         return;
       } else if (index == 0) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => const Home(),
+            transitionDuration: Duration.zero,
+          ),
+        );
       } else if (index == 1) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const ConvertPage()));
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) => const ConvertPage(),
+            transitionDuration: Duration.zero,
+          ),
+        );
       }
       setState(() {
         _selectedIndex = index;
@@ -75,58 +87,67 @@ class _ProfilePage extends State<ProfilePage> {
       return widgets;
     }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(
-          "Weedipedia",
-          style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine'),
-        ),
-        centerTitle: true,
+    return GestureDetector(
+      onPanUpdate: (dis) {
+        if (dis.delta.dx > 0) {
+          Navigator.push(context, SlideLeftRoute(page: const ConvertPage()));
+        } else if (dis.delta.dx < 0) {
+          return; // can't go right from profile page
+        }
+      },
+      child: Scaffold(
         backgroundColor: Colors.black,
-        elevation: 0.0,
-        automaticallyImplyLeading: false,
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ColorPage())); // goes to settings page
-              },
-              icon: const Icon(Icons.format_paint_rounded),
-              color: Colors.white,
-              iconSize: 25,
-            ),
-          ]
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(10, 0, 20, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                child: Text(
-                  "Favorites",
-                  style: style(fontSize: 30),
-                ),
+        appBar: AppBar(
+          title: Text(
+            "Weedipedia",
+            style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine'),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.black,
+          elevation: 0.0,
+          automaticallyImplyLeading: false,
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ColorPage())); // goes to settings page
+                },
+                icon: const Icon(Icons.format_paint_rounded),
+                color: Colors.white,
+                iconSize: 25,
               ),
-              Column(
-                children: buildSavedList(),
-              )
-            ],
+            ]
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(10, 0, 20, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: Text(
+                    "Favorites",
+                    style: style(fontSize: 30),
+                  ),
+                ),
+                Column(
+                  children: buildSavedList(),
+                )
+              ],
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.grey[900],
-        iconSize: 35,
-        items: Constants.navBarItems,
-        selectedItemColor: AppUser.getColor(),
-        currentIndex: _selectedIndex,
-        onTap: _goToPage,
-        selectedIconTheme: IconThemeData(color: AppUser.getColor(), size: 40),
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.grey[900],
+          iconSize: 35,
+          items: Constants.navBarItems,
+          selectedItemColor: AppUser.getColor(),
+          currentIndex: _selectedIndex,
+          onTap: _goToPage,
+          selectedIconTheme: IconThemeData(color: AppUser.getColor(), size: 40),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+        ),
       ),
     );
   }

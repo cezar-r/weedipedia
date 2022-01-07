@@ -29,15 +29,16 @@ class Constants {
   };
 
   static Map convertFrom = {
-    "mg" : 1,
-    "g" : 1000,
-    "1/8" : 3500,
-    "1/4" : 7000,
-    "1/2" : 14000,
-    "oz" : 28350,
-    "lb" : 453592,
-    "kg" : 1000000,
+    "milligrams" : 1,
+    "grams" : 1000,
+    "eighths" : 3544,
+    "quads" : 7088,
+    "halves" : 14175,
+    "ounces" : 28350,
+    "pounds" : 453592,
+    "kilograms" : 1000000,
   };
+
 
   /// helper function that reads the JSON file that contains all the data
   static Future<List> readJsonHelper() async {
@@ -64,6 +65,7 @@ class Constants {
     const BottomNavigationBarItem(
       icon: Icon(Icons.search_rounded),
       label: 'Search',
+
     ),
     const BottomNavigationBarItem(
       icon: Icon(Icons.sync_alt),
