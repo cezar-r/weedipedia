@@ -7,6 +7,7 @@ import 'DescriptionTextWidget.dart';
 import 'Helpers.dart';
 import 'ProfilePage.dart';
 import 'app_user.dart';
+import 'main.dart';
 
 
 class ResultPage extends StatefulWidget {
@@ -175,167 +176,181 @@ class _ResultPageState extends State<ResultPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(
-            "Weedipedia",
-            style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine')
-        ),
-        centerTitle: true,
+    return GestureDetector(
+      onPanUpdate: (dis) {
+        if (dis.delta.dx > 0) {
+          if (fromPage == 'Profile') {
+            Navigator.push(context, SlideLeftRoute(page: const ProfilePage()));
+          } else if (fromPage == 'Home') {
+            Navigator.pop(context, SlideLeftRoute(page: const Home()));
+          }
+
+        } else if (dis.delta.dx < 0) {
+          return; // can't go right from profile page
+        }
+      },
+      child: Scaffold(
         backgroundColor: Colors.black,
-        elevation: 0.0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            if (fromPage == 'Home') {
-              Navigator.pop(context);
-            } else if (fromPage == 'Profile') {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
-            }
-          },
-          color: AppUser.getColor(),
+        appBar: AppBar(
+          title: Text(
+              "Weedipedia",
+              style: style(color: AppUser.getColor(), fontSize: 35, fontFamily: 'LinuxLibertine')
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.black,
+          elevation: 0.0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              if (fromPage == 'Home') {
+                Navigator.pop(context);
+              } else if (fromPage == 'Profile') {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+              }
+            },
+            color: AppUser.getColor(),
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    printTop("${_data['name']}", 25.0), // Name of strain
-                    printTop("${_data['strain_type']}", 18.0), // Type of strain
-                    printTop("${_data['strain_type_strength']}", 12.0), // Percent of type of strain
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (AppUser.savedContains(_data)) {
-                            AppUser.removeSaved(_data);
-                          } else {
-                            AppUser.addSaved(_data);
-                          }
-                        });
-                      },
-                      child: Icon(
-                        Icons.favorite_rounded,
-                        size: 35,
-                        color: AppUser.savedContains(_data) ? AppUser.getColor() : Colors.white,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        splashFactory: NoSplash.splashFactory,
-                        primary: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                  ],
-                ),
-              ],
-            ),
-            // printTop("${_data['name']}", 25.0), // Name of strain
-            // printTop("${_data['strain_type']}", 18.0), // Type of strain
-            // printTop("${_data['strain_type_strength']}", 12.0), // Percent of type of strain
-            Container(
-              margin: const EdgeInsets.fromLTRB(10, 30, 10, 0),
-              child: Row(
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                    // margin: EdgeInsets.
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-                      color: Colors.grey[900],
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
-                          child: Text(
-                              "THC",
-                              style: style(fontSize: 25, fontWeight: FontWeight.normal)
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-                          child: Text(
-                            "${_data['thc_pct']}",
-                            style: style(fontSize: 18, color: checkColor("${_data['thc_pct']}"), fontWeight: FontWeight.normal),
-                          ),
-                        ),
-                      ],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      printTop("${_data['name']}", 25.0), // Name of strain
+                      printTop("${_data['strain_type']}", 18.0), // Type of strain
+                      printTop("${_data['strain_type_strength']}", 12.0), // Percent of type of strain
+                    ],
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-                      color: Colors.grey[900],
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
-                          child: Text(
-                              "CBD",
-                              style: style(fontSize: 25, fontWeight: FontWeight.normal)
-                          ),
+                  Column(
+                    children: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (AppUser.savedContains(_data)) {
+                              AppUser.removeSaved(_data);
+                            } else {
+                              AppUser.addSaved(_data);
+                            }
+                          });
+                        },
+                        child: Icon(
+                          Icons.favorite_rounded,
+                          size: 35,
+                          color: AppUser.savedContains(_data) ? AppUser.getColor() : Colors.white,
                         ),
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-                          child: Text(
-                            "${_data['cbd_pct']}",
-                            style: style(fontSize: 18, color: checkColor("${_data['cbd_pct']}"), fontWeight: FontWeight.normal),
-                          ),
+                        style: ElevatedButton.styleFrom(
+                          splashFactory: NoSplash.splashFactory,
+                          primary: Colors.black,
                         ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-                      color: Colors.grey[900],
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
-                          child: Text(
-                              "CBN",
-                              style: style(fontSize: 25, fontWeight: FontWeight.normal)
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-                          child: Text(
-                            "${_data['cbn_pct']}",
-                            style: style(fontSize: 18, color: checkColor("${_data['cbn_pct']}"), fontWeight: FontWeight.normal),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
                   ),
                 ],
               ),
-            ),
-            reviewContainer("${_data['review']}"),
-            buildContainer("Effects", "${_data['effects']}"), // Effects
-            buildContainer("May Relieve", "${_data['reliefs']}"), //May Relieve
-            buildContainer("Flavors", "${_data['flavors']}"), // Flavors
-            buildContainer("Aromas", "${_data['aromas']}"),
-            buildContainer("Source", "${_data['source']}", openLink: true), // Aromas
-            Container(
-                margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 0)
-            ),
-          ],
+              // printTop("${_data['name']}", 25.0), // Name of strain
+              // printTop("${_data['strain_type']}", 18.0), // Type of strain
+              // printTop("${_data['strain_type_strength']}", 12.0), // Percent of type of strain
+              Container(
+                margin: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      // margin: EdgeInsets.
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(6.0)),
+                        color: Colors.grey[900],
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
+                            child: Text(
+                                "THC",
+                                style: style(fontSize: 25, fontWeight: FontWeight.normal)
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+                            child: Text(
+                              "${_data['thc_pct']}",
+                              style: style(fontSize: 18, color: checkColor("${_data['thc_pct']}"), fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(6.0)),
+                        color: Colors.grey[900],
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
+                            child: Text(
+                                "CBD",
+                                style: style(fontSize: 25, fontWeight: FontWeight.normal)
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+                            child: Text(
+                              "${_data['cbd_pct']}",
+                              style: style(fontSize: 18, color: checkColor("${_data['cbd_pct']}"), fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(6.0)),
+                        color: Colors.grey[900],
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 7.0),
+                            child: Text(
+                                "CBN",
+                                style: style(fontSize: 25, fontWeight: FontWeight.normal)
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+                            child: Text(
+                              "${_data['cbn_pct']}",
+                              style: style(fontSize: 18, color: checkColor("${_data['cbn_pct']}"), fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              reviewContainer("${_data['review']}"),
+              buildContainer("Effects", "${_data['effects']}"), // Effects
+              buildContainer("May Relieve", "${_data['reliefs']}"), //May Relieve
+              buildContainer("Flavors", "${_data['flavors']}"), // Flavors
+              buildContainer("Aromas", "${_data['aromas']}"),
+              buildContainer("Source", "${_data['source']}", openLink: true), // Aromas
+              Container(
+                  margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 0)
+              ),
+            ],
+          ),
         ),
-      ),
 
+      ),
     );
   }
 

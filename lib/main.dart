@@ -16,6 +16,8 @@ DONE: Get rid of press animation on heart button
 DONE: Swipe to navigate
   Animations
 Loading Screen
+DONE: Swipe from Result Page
+DONE: Remember info from convert page
 */
 /// Home Screen Page
 

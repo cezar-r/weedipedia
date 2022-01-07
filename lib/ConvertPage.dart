@@ -9,9 +9,9 @@ import 'main.dart';
 
 /// A class that represents a converter to convert different weight metrics
 class Converter {
-  String? _convertFrom = 'grams';
-  String? _convertTo = 'ounces';
-  String _convertedAmount = '0.99';
+  String? _convertFrom = AppUser.getConvertFrom();
+  String? _convertTo = AppUser.getConvertTo();
+  String _convertedAmount = AppUser.getConvertedAmount();
   bool _converted = false;
   final TextEditingController _controllerFrom = TextEditingController();
 
@@ -21,23 +21,23 @@ class Converter {
   void _convert() {
     String ogAmount = _controllerFrom.text;
     if (ogAmount == '') {
-      ogAmount = "28";
+      ogAmount = AppUser.getOgAmount();
     }
     var _amount = int.parse(ogAmount);
     int mg = Constants.convertFrom[_convertFrom] * _amount;
     num displayAmount = mg / Constants.convertFrom[_convertTo];
     _converted = true;
     _convertedAmount = displayAmount.toStringAsFixed(2);
+    AppUser.setConvertedAmount(_convertedAmount);
+    AppUser.setOgAmount(ogAmount);
   }
 
   /// Returns a list of text widgets that describe the conversion
   /// "1000 milligrams is about 1 gram"
   List<Text> strRep() {
     List<Text> list = [];
-    String ogAmount = _controllerFrom.text;
-    if (ogAmount == '') {
-      ogAmount = '28';
-    }
+    String ogAmount = AppUser.getOgAmount();
+
     list.add(Text(
       "$ogAmount $_convertFrom",
       style: style(color: AppUser.getColor(), fontSize: 18),
@@ -160,9 +160,11 @@ class _ConvertPage extends State<ConvertPage> {
                       if (from == 'from') {
                         c._convertFrom = text.data.toString();
                         c._convert();
+                        AppUser.setConvertFrom(c._convertFrom!);
                       } else {
                         c._convertTo = text.data.toString();
                         c._convert();
+                        AppUser.setConvertTo(c._convertTo!);
                       }
                       setState(() {
 
@@ -193,7 +195,7 @@ class _ConvertPage extends State<ConvertPage> {
         backgroundColor: Colors.black,
         appBar: Constants.appBar(),
         body: Container(
-         padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+         padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
           child: Column(
             children: <Widget>[Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -221,7 +223,7 @@ class _ConvertPage extends State<ConvertPage> {
                             controller: c._controllerFrom,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              hintText: '28',
+                              hintText: AppUser.getOgAmount(),
                               hintStyle: style(color: Colors.grey[600], fontSize: 20),
                               fillColor: Colors.grey[900],
                               filled: true,
@@ -239,7 +241,7 @@ class _ConvertPage extends State<ConvertPage> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
-                                    c._convertFrom!,
+                                    AppUser.getConvertFrom(),
                                     style: style(fontSize: 14),
                                   ),
                                   IconButton(
@@ -291,9 +293,11 @@ class _ConvertPage extends State<ConvertPage> {
                             color: Colors.grey[900],
                             child : Align(
                               alignment: Alignment.centerLeft,
-                              child: Text(
-                                c._converted ? c._convertedAmount : "0.99",
-                                style: style(color: c._converted ? Colors.white : Colors.grey[600], fontSize: 20),
+                              child: SelectableText(
+
+                                  c._convertedAmount,
+                                  style: style(color: c._converted ? Colors.white : Colors.grey[600], fontSize: 20),
+
                               ),
                             ),
                         ),
@@ -307,7 +311,7 @@ class _ConvertPage extends State<ConvertPage> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Text(
-                                      c._convertTo!,
+                                      AppUser.getConvertTo(),
                                       style: style(fontSize: 14),
                                     ),
                                     IconButton(

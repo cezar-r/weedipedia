@@ -95,4 +95,48 @@ class AppUser {
     String strSaved = json.encode(recent);
     _prefsInstance?.setString('recent', strSaved);
   }
+
+  /// returns the convert from metric
+  static String getConvertFrom() {
+    String convertFrom = _prefsInstance?.getString('convertFrom') ?? 'grams';
+    return convertFrom;
+  }
+
+  /// sets the convert from metric
+  static void setConvertFrom(String convertFrom) {
+    _prefsInstance?.setString('convertFrom', convertFrom);
+  }
+
+  /// gets the convert to metric
+  static String getConvertTo() {
+    String convertFrom = _prefsInstance?.getString('convertTo') ?? 'ounces';
+    return convertFrom;
+  }
+
+  /// sets the convert to metric
+  static void setConvertTo(String convertTo) {
+    _prefsInstance?.setString('convertTo', convertTo);
+  }
+
+  /// returns the amount of the convert from metric
+  static String getOgAmount() {
+    String ogAmount = _prefsInstance?.getString('ogAmount') ?? '28';
+    return ogAmount;
+  }
+
+  /// sets the amount of the convert from metric
+  static void setOgAmount(String ogAmount) {
+    _prefsInstance?.setString('ogAmount', ogAmount);
+  }
+
+  /// gets the amount of the convert to metric
+  static String getConvertedAmount() {
+    String convertedAmount = _prefsInstance?.getString('convertedAmount') ?? '0.99';
+    return convertedAmount;
+  }
+
+  /// sets the amount of the convert to metric
+  static void setConvertedAmount(String convertedAmount) {
+    _prefsInstance?.setString('convertedAmount', convertedAmount);
+  }
 }
