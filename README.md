@@ -20,7 +20,7 @@ All of the marijuana strain data was scraped from [Allbud](https://www.allbud.co
  - Lastly, there is a profile page that contains all of the users favorited strains and color preferences.
  - <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6708.PNG' height = 420 width = 200> <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6724.PNG' height = 420 width = 200>
 
-## User Preferences
+### Color Preferences
  - One of the unique features of this app is how it allows the user to pick a theme color from over 56 colors.
  - <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6710.PNG' height = 420 width = 200> <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6711.PNG' height = 420 width = 200> <img src = 'https://github.com/cezar-r/weedipedia/blob/main/assets/IMG-6725.PNG' height = 420 width = 200>
 
