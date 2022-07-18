@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 /// method that is used to style text
-///
 /// attributes that are styled are color, font, font size, and font weight
 TextStyle style({Color? color = Colors.white,
   double fontSize = 12,
